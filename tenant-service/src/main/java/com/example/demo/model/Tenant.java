@@ -11,6 +11,15 @@ public class Tenant {
     private String name;
     private String tenantId;
     private Boolean active;
+    private String adminEmail;
+
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }
 
     public String getId() {
         return id;
@@ -44,11 +53,12 @@ public class Tenant {
         this.active = active;
     }
 
-    public Tenant(String id, String name, String tenantId, Boolean active) {
+    public Tenant(String id, String name, String tenantId, Boolean active, String adminEmail) {
         this.id = id;
         this.name = name;
         this.tenantId = tenantId;
         this.active = active;
+        this.adminEmail = adminEmail;
     }
 
     public Tenant() {

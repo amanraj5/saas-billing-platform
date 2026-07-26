@@ -27,8 +27,15 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION);
 
+        String path = exchange.getRequest().getURI().getPath();
+
+        if (path.startsWith("/auth")) {
+            return chain.filter(exchange);
+        }
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return chain.filter(exchange); // public route
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
         }
 
         String token = authHeader.substring(7);
@@ -38,6 +45,14 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             String user = jwtService.extractUsername(token);
             String role = claims.get("role", String.class);
             String tenantId = claims.get("tenantId", String.class);
+
+            if (path.equals("/tenants/onboard") && !"SUPER_ADMIN".equals(role)) {
+
+                exchange.getResponse()
+                        .setStatusCode(HttpStatus.FORBIDDEN);
+
+                return exchange.getResponse().setComplete();
+            }
 
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()

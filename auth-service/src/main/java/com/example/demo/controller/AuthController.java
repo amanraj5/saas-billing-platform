@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.SecurityConfig;
+import com.example.demo.dto.CreateUserRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.model.Users;
@@ -10,6 +11,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,5 +48,17 @@ public class AuthController {
         String tenantId = claims.get("tenantId", String.class);
         String role = claims.get("role", String.class);
         return ResponseEntity.ok(new LoginResponse(token, tenantId, role));
+    }
+
+    @PostMapping("/internal/users")
+    public Users createUsers(@RequestBody CreateUserRequest request) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        Users user = new Users();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+        user.setTenantId(request.getTenantId());
+
+        return userRepository.save(user);
     }
 }

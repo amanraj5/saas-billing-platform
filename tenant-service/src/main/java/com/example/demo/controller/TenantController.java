@@ -1,8 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Tenant;
+import com.example.demo.model.TenantOnboardingRequest;
 import com.example.demo.repository.TenantRepository;
-import com.example.demo.service.TenantContext;
+import com.example.demo.service.TenantOnboardingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,8 @@ public class TenantController {
 
     @Autowired
     private TenantRepository tenantRepository;
+    @Autowired
+    private TenantOnboardingService onboardingService;
 
     @PostMapping
     public Tenant createTenant(@RequestBody Tenant tenant) {
@@ -31,9 +34,14 @@ public class TenantController {
 
     @GetMapping("/getTenants")
     public List<Tenant> getTenants() {
-        return tenantRepository.findByTenantId(
-                TenantContext.getTenantId()
-        );
+        return null;
+    }
+
+    @PostMapping("/onboard")
+    public Tenant onboardTenant(
+            @RequestBody TenantOnboardingRequest request) {
+
+        return onboardingService.onboard(request);
     }
 
 }
