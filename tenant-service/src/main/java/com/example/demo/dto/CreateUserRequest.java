@@ -9,11 +9,10 @@ public class CreateUserRequest {
     public CreateUserRequest() {
     }
 
-    public CreateUserRequest(String email, String password, String role, String tenantId) {
+    public CreateUserRequest(String email, String password, String role) {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.tenantId = tenantId;
     }
 
     public String getEmail() {

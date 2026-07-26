@@ -6,6 +6,14 @@ public class CreateUserRequest {
     private String role;
     private String tenantId;
 
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
     public CreateUserRequest() {
     }
 
@@ -40,11 +48,4 @@ public class CreateUserRequest {
         this.role = role;
     }
 
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
 }

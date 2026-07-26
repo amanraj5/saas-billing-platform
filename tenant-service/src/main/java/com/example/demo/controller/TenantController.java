@@ -38,9 +38,7 @@ public class TenantController {
     }
 
     @PostMapping("/onboard")
-    public Tenant onboardTenant(
-            @RequestBody TenantOnboardingRequest request) {
-
+    public Tenant onboardTenant(@RequestBody TenantOnboardingRequest request) {
         return onboardingService.onboard(request);
     }
 

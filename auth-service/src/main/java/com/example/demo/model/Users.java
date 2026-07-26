@@ -13,6 +13,17 @@ public class Users {
     private String password;
     private String role;
     private String tenantId;
+    private boolean active = true;
+
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 
     public String getId() {
         return id;
@@ -57,11 +68,12 @@ public class Users {
     public Users() {
     }
 
-    public Users(String id, String email, String password, String role, String tenantId) {
+    public Users(String id, String email, String password, String role, String tenantId, boolean active) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
         this.tenantId = tenantId;
+        this.active = active;
     }
 }

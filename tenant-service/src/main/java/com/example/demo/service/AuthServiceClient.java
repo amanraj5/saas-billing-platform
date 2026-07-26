@@ -10,10 +10,7 @@ public class AuthServiceClient {
     @Autowired
     RestTemplate restTemplate;
 
-    public void createTenantAdmin(
-            String email,
-            String password,
-            String tenantId) {
+    public void createTenantAdmin(String email, String password, String tenantId) {
 
         CreateUserRequest request = new CreateUserRequest();
 
@@ -22,9 +19,6 @@ public class AuthServiceClient {
         request.setRole("TENANT_ADMIN");
         request.setTenantId(tenantId);
 
-        restTemplate.postForObject(
-                "http://localhost:8081/auth/internal/users",
-                request,
-                Object.class);
+        restTemplate.postForObject("http://localhost:8081/auth/users", request, Object.class);
     }
 }

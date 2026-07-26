@@ -32,7 +32,8 @@ public class DataLoader {
                     "admin@saas.com",
                     encoder.encode("admin123"),
                     "SUPER_ADMIN",
-                    "TENANT_123"
+                    "TENANT_123",
+                    true
             );
             userRepository.save(admin);
         }

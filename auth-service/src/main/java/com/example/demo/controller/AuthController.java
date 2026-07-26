@@ -4,20 +4,21 @@ import com.example.demo.config.SecurityConfig;
 import com.example.demo.dto.CreateUserRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
+import com.example.demo.dto.TenantUserRequest;
 import com.example.demo.model.Users;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JWTUtil;
+import com.example.demo.security.UserContext;
+import com.example.demo.service.UserManagementService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,11 +27,13 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    SecurityConfig securityConfig;
+    private SecurityConfig securityConfig;
     @Autowired
-    JWTUtil jwtUtil;
+    private JWTUtil jwtUtil;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+    @Autowired
+    private UserManagementService userManagementService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -50,15 +53,28 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token, tenantId, role));
     }
 
-    @PostMapping("/internal/users")
+    @PostMapping("/users")
     public Users createUsers(@RequestBody CreateUserRequest request) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        Users user = new Users();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        user.setTenantId(request.getTenantId());
+        return userManagementService.createUser(request);
+    }
 
-        return userRepository.save(user);
+    @PostMapping("/users/tenant")
+    public Users createTenantUser(@RequestBody TenantUserRequest request) {
+        return userManagementService.createTenantUser(request);
+    }
+
+    @GetMapping("/users")
+    public List<Users> getUsers() {
+        return userRepository.findByTenantId(UserContext.getTenantId());
+    }
+
+    @GetMapping("/debug")
+    public String debug() {
+
+        return UserContext.getRole()
+                + " | "
+                + UserContext.getTenantId()
+                + " | "
+                + UserContext.getEmail();
     }
 }

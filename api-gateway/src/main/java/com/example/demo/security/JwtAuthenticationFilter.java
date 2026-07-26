@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        if (path.startsWith("/auth")) {
+        if (path.startsWith("/auth/login")) {
             return chain.filter(exchange);
         }
 
@@ -46,11 +46,20 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             String role = claims.get("role", String.class);
             String tenantId = claims.get("tenantId", String.class);
 
+            // Only SUPER_ADMIN has access to onboard new tenants
             if (path.equals("/tenants/onboard") && !"SUPER_ADMIN".equals(role)) {
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
 
-                exchange.getResponse()
-                        .setStatusCode(HttpStatus.FORBIDDEN);
+            // Only TENANT_ADMIN and SUPER_ADMIN has access to create users.
+            if (path.startsWith("/auth/users") && !"TENANT_ADMIN".equals(role) && !"SUPER_ADMIN".equals(role)) {
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
 
+            if (path.equals("/auth/users/tenant") && !"TENANT_ADMIN".equals(role)) {
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
